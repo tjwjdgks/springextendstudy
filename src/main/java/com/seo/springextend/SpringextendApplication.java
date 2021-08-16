@@ -7,7 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringextendApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(SpringextendApplication.class, args);
     }
+    // 스프링 부트는 빈 등록 과정이 2개
+    // 1.어플리케이션에 정의한 빈 등록
+    // 2. 자동설정이 제공하는 빈 등록
+    // 이때 1번에서 정의한 빈을 2번에서 빈을 재정의 하는 기능을 자동으로 제공했지만  2.1 이후 부터는 허용하지 않음
+    // 프로퍼티에서 spring.main.allow-bean-definition-overriding=true 로 바꿀수 있음
 
 }

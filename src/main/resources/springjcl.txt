@@ -1,0 +1,8 @@
+로깅 퍼사드 를 통해서 로깅 -> 실제 작업은 설정한 로거가 실제 작업
+sl4j 컴파일 타임
+jcl 런타임 타임 동적 결정
+jcl은 런타임에 동적으로 결정하기 때문에 문제가 생길여지가 있음 따라서 sl4j 선호
+but 래거시 프로젝트에서는 sl4j가 없었기 때문에 이미 spring에서 jcl을 채택
+-> 따라서 기존 jcl을 sl4j로 바꾸고 싶을 때 springjcl이라는 브릿지를 사용
+
+sl4j -> logback-classic -> logback
