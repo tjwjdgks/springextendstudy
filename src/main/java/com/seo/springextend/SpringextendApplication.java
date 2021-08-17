@@ -2,7 +2,13 @@ package com.seo.springextend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableAsync // TaskExecutionAutoConfiguration 자동 설정 적용
+// 비동기로 실행 가능 자동 설정 때문에 properties로 조정가능하다
+@EnableScheduling // TaskSchedulingAutoConfiguration 자동 설정 적용
+// 주기적으로 operation 실행 하고 싶을 때 사용
 @SpringBootApplication
 public class SpringextendApplication {
 

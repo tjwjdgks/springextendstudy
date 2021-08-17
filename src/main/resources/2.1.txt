@@ -1,5 +1,6 @@
-2.1 의존성 변경
+2.1
 
+의존성 변경
     스프링 프레임워크 5.0 -> 스프링 프레임워크 버전 5.1
         로거 설정 개선 spring-jcl
         컴포넌트 스캐닝 성능 개선이 가능한 “컴포넌트 인덱스" 기능 제공
@@ -22,3 +23,43 @@
     하이버네이트 5.2 -> 하이버네이트 5.3
         JPA 2.2 지원
         Java 8의 Date와 Time API 지원
+
+프로퍼티 번경
+    https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.1.0-Configuration-Changelog
+
+    스프링 데이터 JPA 부트스크랩 모드 지원
+        애플리케이션 구동 시간을 줄이기 위해 스프링 데이터 JPA 리파지토리 생성을 지연 시키는 설정
+        spring.data.jpa.repositories.bootstrap-mode=deferred
+            DEFERRED: 애플리케이션 구동 이후에 리파지토리 인스턴스 만들어 주입해준다.
+            LAZY: 애플리케이션 구동 이후에도 만들지 않다가 처음으로 사용할 시점에 만들어 주입해준다.
+    JpaProperties에서 하이버네이트 관련 프로퍼티를 HibernateProperties로 분리
+
+    마이그레이션 툴
+    프로퍼티를 마이그레이션 하지 않더라도 기존 프로퍼티로 애플리케이션이 구동 가능하며 프로퍼티가 어떻게 바뀌었는지 알려주는 툴.
+
+    <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-properties-migrator</artifactId>
+            <scope>runtime</scope>
+    </dependency>
+
+Datasize 추가
+    org.springframework.util.unit.DataSize
+    application.properties에서 데이터 사이즈를 손쉽게 바인딩 받을 수 있다
+
+    컨버터 지원
+        StringToDataSizeConverter
+        NumberToDataSizeConverter
+
+로그 그룹
+    같은 로그 레벨을 적용할 패지키 묶음을 만들 수 있는 기능으로 여러 패키지의 로그 레벨을 손쉽게 변경할 수 있다.
+
+    로그 그룹 정의하는 방법
+        logging.group.{그룹 이름}={패키지}, {패키지}, {패키지}, ...
+        logging.level.{그룹 이름}={로그 레벨}
+
+    스프링 부트가 미리 정의해둔 로그 그룹
+        web = 스프링 웹 MVC 관련 패키지 로그 그룹
+        sql = 스프링 JDBC와 하이버네이트 SQL을 묶어둔 로그 그룹
+
+액추에이터
