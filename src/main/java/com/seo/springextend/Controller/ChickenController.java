@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ChickenController {
 
-    @Value("${chickenSize}")
+    @Value("${chicken.size}")
     private DataSize chickenSize;
     @GetMapping("/chicken")
     public String Chicken(){

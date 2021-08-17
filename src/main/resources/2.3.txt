@@ -1,0 +1,119 @@
+2.3
+    의존성 변경
+        Spring-Boot-Starter-Web에서 Spring-Boot-Starter-Validation 모듈을 가져오지 않도록 변경 됨.
+        Spring Data Neumann
+            코틀린 코루틴 지원
+            MongoDB, Cassandra, Couchbase SDK, QueryDSL, Elasticsearch 버전 업데이트
+            Spring Data R2DBC 추가
+        Jackson 2.11 (알면 좋음)
+            Date와 Calendar 기본 포맷 중에 timzone 표현하는 방법이 표준에 맞도록 변경 됨.
+            필드 이름 없이 Array 만들지 못하도록 변경 됨.
+        Spring Security 5.3
+            OAuth 2.0 클라이언트와 리소스 서버 관련 기능 개선
+        JUnit Jupiter 5.6
+        Mockito 3.3
+
+    프로퍼티 변경
+        Period 지원 // 구분 Period 날짜 비교 , Duration 시간 비교
+            PeriodToStringConverter
+            StringToPeriodConverter
+        spring.data.jpa.repositories.bootstrap-mode 기본으로 deferred 모드. // 어플리케이션 실행후 초기화되는 것
+        https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3.0-Configuration-Changelog
+
+    *mvnw 메이븐이 로컬에 설치되어 있지 않더라도 메이븐 다운로드 받아 메이븐 사용가능하게 해주는 wrapper
+
+    * jar 파일 fat-jar (독립적으로 실행 가능한 JAR) jar launcher
+
+    도커
+        Dockerfile
+            FROM openjdk:11.0.8-jre-slim   (이미지 이름)
+            WORKDIR application            (applicaiton 디렉토리 만듬)
+            ARG JAR_FILE=target/springextend*.jar  (target 디렉토리에서 springextend로 시작하고 jar로 끝나는 JAR_FILE이라는 argument 정의)
+            COPY ${JAR_FILE} application.jar       (JAR_FILE을 application.jar로 이름 변경 및 복사)
+            ENTRYPOINT ["java","-jar","application.jar"] (java -jar application.jar 실행)
+
+        이미지 빌드
+            docker build -t demo-springboot23 . ( 점(.)은 도커 파일의 위치)
+
+        도커 컨네이터 실행하기
+            docker run --rm -p 8080:8080 demo-springboot23
+
+        보다 효율적인 도커 이미지
+            스프링 부트 JAR 파일 구성 요소
+                BOOT-INF/lib: 라이브러리
+                BOOT-INF/classes: 애플리케이션 코드 및 리소스
+                META-INF: MANIFEST와 maven 프로퍼티 및 pom.xml
+            변하지 않는 것 부터 레이어 쌓기
+                JDK -> lib -> application code
+            변하지 않은 레이어는 캐시를 사용하기 때문에 빌드가 더 효율적이다.
+
+            도커 이미지
+
+            FROM openjdk:11.0.8-jdk-slim AS builder (jdk builder라고 명명)
+            WORKDIR source (source dir 만듬)
+            ARG JAR_FILE=target/springextend*.jar
+            COPY ${JAR_FILE} application.jar
+            RUN jar -xf ./application.jar (jar 파일 압축 풀기)
+
+            FROM openjdk:11.0.8-jre-slim (jre image 위에서)
+            WORKDIR application (application 디렉토리 만듬)
+            COPY --from=builder source/BOOT-INF/lib lib (lib라고 복사, 라이브러리 계층 추가 )
+            COPY --from=builder source/BOOT-INF/classes app (app라고 복사, class 계층 추가 )
+            ENTRYPOINT ["java","-cp","app:lib/*","com.seo.springextend.SpringextendApplication"]  \n
+                         (app 과 lib를 cp(class path)에 넣고 com.seo.springextend.SpringextendApplication 실행
+
+            스프링 부트 2.3+에서 계층형 빌드 설정
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <layers>
+                            <enabled>true</enabled>
+                        </layers>
+                    </configuration>
+                </plugin>
+
+                layer에 대한 index 만들어진다
+
+            계층형 빌드 JAR 실행하기
+                java -Djarmode=layertools -jar 어플리케이션.jar
+                java -Djarmode=layertools -jar 어플리케이션.jar list
+                    layer 보기
+                java -Djarmode=layertools -jar 어플리케이션.jar extract
+                    layer 별로 디렉토리 추출(디렉토리 만들어 준다)
+                * 따라서 각각의 디렉터리를 쌓으면 효율적이다
+            스프링 부트 기본 계층
+                *snapshot 자주 바뀌는 라이브러리
+                Application: 애플리케이션 코드 및 리소스
+                Snapshot 라이브러리(snapshot-dependencies): 버전이 SNAPSHOT인 라이브러리
+                스프링 부트 로더(spring-boot-loader): 스프링 부트 JAR 실행기 들어있는 패키지 fat jar launcher
+                Dependencies: 버전이 SNAPSHOT이 아닌 라이브러리
+
+                layer를 바꿀수도 있음
+
+            메이븐 플러그인을 통해서 dockerfile 없이도 이미지 만들수 있음
+                ./mvnw spring-boot:build-image
+                build pack으로 만든 것
+            도커 이미지에 이름만 주면 기본값에 tag가 :latest가 붙는다 따라서 tag가 붙어 있으면 tag까지 주어야 한다
+
+            package를 할때마다 도커 이미지 build 하고 싶을 때
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <layers>
+                                <enabled>true</enabled>
+                            </layers>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>build-image</goal>
+                               </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>

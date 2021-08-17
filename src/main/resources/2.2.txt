@@ -1,0 +1,69 @@
+2.2
+    의존성 변경 (리엑티브, 코틀린을 많이 지원)
+        스프링 프레임워크 5.2
+            스프링 웹플럭스 기반 코틀린 코루틴 지원
+            RSocket 지원
+            R2DBC 지원
+                리엑티브 stream 지원 rdb (backpressure 지원해야함)
+                backpressure(배압) 이란
+                    데이터 보내는 쪽에서 보내는데 받는 쪽에서 지연이 있을 경우
+                    버리거나 cache에 쌓아 놓거나해야 하며 받는 쪽은 보내는 족족 처리해야 한다
+                    리엑티브 stream은 이러한 기능을 조절할 수 있어야 한다
+            JUnit Jupiter 5.7 지원
+            @Configuration에 proxyBeanMethods 속성 추가
+        스프링 시큐리티 5.2
+            OAuth 2.0 클라이언트 기능 추가
+            OAuth 2.0 리소스 서버 기능 추가
+            OAuth 2.0 인증 서버 기능은 별도의 커뮤니티 프로젝트로 분리
+        스프링 데이터 Moore
+            선언전인 리액티브 트랜잭션 지원 (@Transactional)
+            리액티브 QueryDSL
+            성능 향상
+        스프링 HATEOAS 0.25 -> 1.0.*
+            API가 바뀌어 버림!
+            마이그레이션 사례 커밋 참고.
+        JUnit 5
+
+    프로퍼티 변경
+        logging.file -> logging.file.name
+        logging.path -> logging.file.path
+        https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2.0-Configuration-Changelog
+
+    성능 개선
+        스프링 부트 애플리케이션을 최대한 빠르게 띄우고 싶다면?
+            @Configuration(proxyBeanMethods = false) 적용
+            spring.main.lazy-initialization=true
+            spring.data.jpa.repositories.bootstrap-mode=lazy
+            spring.jmx.enabled=false (이미 기본으로 적용되어 있음)
+                java management extension
+                Mbean, mbean server에 등록(로컬 jvm에서 돌고 있음)
+                jconsole은 mbean을 접근할 수 있는 클라이언트
+        단점은?
+            요청 처리 시간이 느려질 수 있다. 아직 초기화 하지 않은 빈을 만드느라...
+            애플리케이션 구동시 발생해야 했던 에러가 애플리케이션 동작 중에 발생할 수 있다.
+
+    @ConfigurationProperties 개선
+        @ConfigurationPropertiesScan
+            스프링 부트 2.2부터 @ConfigurationProperties를 스캔해서 빈으로 등록하는 기능을 제공한다.
+            @SpringBootApplication에 추가로 선언하면 편하다.
+
+        Immutable @ConfigurationProperties 지원
+            // properties에 정의된 값 변경 방지
+            세터(setter)가 아닌 생성자를 사용해서 프로퍼티를 바인딩할 수 있는 기능을 지원한다.
+            @ConfigurationPropertiesScan 또는 @EnableConfigurationProperties를 통해 빈으로 만드는 경우에만 동작한다. 그밖에 다른 방법을 사용해서 빈으로 등록할 때는 적용되지 않는다.
+            생성자가 여러개일 경우에는 바인딩에 사용할 생성자에 @ConstructorBinding을 추가해야 한다.
+
+
+    Actuator, health 엔드 포인트 변경
+        Health 엔드포인트
+            애플리케이션의 상태 점검 용도로 사용할 수 있다.
+            HealthContributor를 사용해서 커스텀한 Health 체크를 추가할 수 있다.
+            스프링 부트가 기본으로 다양한 구현체를 제공하고 있다.
+            Management.endpoint.health.show-details 또는 management.endpoint.health.show-components를 통해 구체적인 정보를 출력할 수 있다. (HealthContributor 인터페이스를 통해 제공됨)
+            Health 그룹
+                여러 HealthIndicator를 묶어서 설정할 수 있는 기능 “로그 그룹”과 비슷하다.
+                management.endpoint.health.group.server.include=db,ping // ping과 db를 server라는 이름으로 묶는다.
+                management.endpoint.health.group.server.show-details=always // server을 보여준다
+                // localhost:8080/actuator/health/{그룹이름} 으로 그룹 조회 가능
+
+

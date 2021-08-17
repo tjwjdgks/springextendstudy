@@ -36,7 +36,6 @@
 
     마이그레이션 툴
     프로퍼티를 마이그레이션 하지 않더라도 기존 프로퍼티로 애플리케이션이 구동 가능하며 프로퍼티가 어떻게 바뀌었는지 알려주는 툴.
-
     <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-properties-migrator</artifactId>

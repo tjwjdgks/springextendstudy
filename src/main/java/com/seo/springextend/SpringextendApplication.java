@@ -1,7 +1,10 @@
 package com.seo.springextend;
 
+import com.seo.springextend.Properties.ChickenProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -10,6 +13,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling // TaskSchedulingAutoConfiguration 자동 설정 적용
 // 주기적으로 operation 실행 하고 싶을 때 사용
 @SpringBootApplication
+//@EnableConfigurationProperties(ChickenProperties.class)
+@ConfigurationPropertiesScan // properties 빈으로 등록할 때 장점이 있기 때문에 권장 // 현재 위치부터 Scan
 public class SpringextendApplication {
 
     public static void main(String[] args) {
