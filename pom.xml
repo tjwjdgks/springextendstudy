@@ -65,6 +65,13 @@
                         <enabled>true</enabled>
                     </layers>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-image</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <!--- github -->
             <!---
@@ -73,7 +80,7 @@
                 <artifactId>git-commit-id-plugin</artifactId>
             </plugin>
             -->
-            <!-- build 프로퍼티
+            <!-- build 프로퍼티 actuator
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
