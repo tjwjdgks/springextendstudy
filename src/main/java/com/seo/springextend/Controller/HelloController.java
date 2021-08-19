@@ -1,5 +1,6 @@
 package com.seo.springextend.Controller;
 
+import com.seo.springextend.Properties.ConfigTreeProperties;
 import com.seo.springextend.Service.LocalHostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.availability.ApplicationAvailability;
@@ -12,10 +13,13 @@ public class HelloController {
     @Autowired
     ApplicationAvailability availability;
     @Autowired
+    ConfigTreeProperties configTreeProperties;
+    @Autowired
     LocalHostService hostService;
     @GetMapping("/status/server")
     public String getStatus(){
         return "Application is now " + availability.getLivenessState() + " " + availability.getReadinessState()
-                +" " + hostService.getLocalHostInfo();
+                +" " + hostService.getLocalHostInfo()
+                +" " + configTreeProperties.getMessage();
     }
 }
